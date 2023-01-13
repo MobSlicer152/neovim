@@ -84,7 +84,7 @@ local lsp_flags = {
 require('clangd_extensions').setup {
     extensions = {
         autoSetHints = true,
-	inlay_hints = {
+	    inlay_hints = {
             -- Only show inlay hints for the current line
             only_current_line = false,
             -- Event which triggers a refersh of the inlay hints.
@@ -131,7 +131,7 @@ require('clangd_extensions').setup {
                 TemplateTemplateParm = "🅃",
                 TemplateParamObject = "🅃",
             },
-	},
+	    },
     },
 }
 
@@ -194,8 +194,8 @@ cmp.setup {
 
 vim.api.nvim_exec(
     [[
-NvimTreeFindFile
 NvimTreeOpen
+NvimTreeFindFile 
     ]],
     true)
 
