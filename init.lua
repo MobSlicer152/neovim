@@ -24,6 +24,8 @@ require "paq" {
     "williamboman/mason-lspconfig.nvim";
 
     "mfussenegger/nvim-dap";
+
+    "nvim-telescope/telescope.nvim";
 }
 
 local g = vim.g
@@ -68,6 +70,11 @@ km.set('n', '<F7>', '<Cmd>sp<CR>', opts)
 km.set('n', '<F8>', '<Cmd>vsp<CR>', opts)
 km.set('n', '<F10>', '<Cmd>NvimTreeToggle<CR>', opts)
 
+require("telescope").setup()
+ts = require("telescope.builtin")
+
+km.set('n', 'ff', ts.find_files, opts)
+
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
@@ -77,7 +84,7 @@ local on_attach = function(client, bufnr)
   -- Mappings.
   -- See `:help vim.lsp.*` for documentation on any of the below functions
   local bufopts = { noremap=true, silent=true, buffer=bufnr }
-  km.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+  km.set('n', 'gD', vim.lsp.buf.definition, bufopts)
   km.set('n', 'gd', vim.lsp.buf.definition, bufopts)
   km.set('n', 'K', vim.lsp.buf.hover, bufopts)
   km.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
@@ -115,7 +122,7 @@ local lspconfig = require('lspconfig')
 local servers = { 'asm_lsp', 'clangd', 'cmake', 'pyright' }
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
-    -- on_attach = my_custom_on_attach,
+    on_attach = on_attach,
     capabilities = capabilities,
   }
 end
