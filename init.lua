@@ -17,9 +17,13 @@ require "paq" {
 
     "Shatur/neovim-tasks";
 
-    "p00f/clangd_extensions.nvim";
-
     "nvim-tree/nvim-tree.lua";
+
+    "williamboman/mason.nvim";
+
+    "williamboman/mason-lspconfig.nvim";
+
+    "mfussenegger/nvim-dap";
 }
 
 local g = vim.g
@@ -31,13 +35,13 @@ set.softtabstop = 4
 set.shiftwidth = 4
 set.expandtab = true
 set.number = true
-set.fileformats = dos
 set.termguicolors = true
 set.list = true
 set.listchars = "tab:> "
 
 vim.api.nvim_exec(
 [[
+colorscheme PaperColor
 autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -94,66 +98,21 @@ local lsp_flags = {
   -- This is the default in Nvim 0.7+
   debounce_text_changes = 150,
 }
-require('clangd_extensions').setup {
-    extensions = {
-        autoSetHints = true,
-	    inlay_hints = {
-            -- Only show inlay hints for the current line
-            only_current_line = false,
-            -- Event which triggers a refersh of the inlay hints.
-            -- You can make this "CursorMoved" or "CursorMoved,CursorMovedI" but
-            -- not that this may cause  higher CPU usage.
-            -- This option is only respected when only_current_line and
-            -- autoSetHints both are true.
-            only_current_line_autocmd = "CursorHold",
-            -- whether to show parameter hints with the inlay hints or not
-            show_parameter_hints = true,
-            -- prefix for parameter hints
-            parameter_hints_prefix = "<- ",
-            -- prefix for all the other hints (type, chaining)
-            other_hints_prefix = "=> ",
-            -- whether to align to the length of the longest line in the file
-            max_len_align = false,
-            -- padding from the left if max_len_align is true
-            max_len_align_padding = 1,
-            -- whether to align to the extreme right or not
-            right_align = false,
-            -- padding from the right if right_align is true
-            right_align_padding = 7,
-            -- The color of the hints
-            highlight = "Comment",
-            -- The highlight group priority for extmark
-            priority = 100,
-        },
-        ast = {
-            -- These are unicode, should be available in any font
-            role_icons = {
-                 type = "🄣",
-                 declaration = "🄓",
-                 expression = "🄔",
-                 statement = ";",
-                 specifier = "🄢",
-                 ["template argument"] = "🆃",
-            },
-            kind_icons = {
-                Compound = "🄲",
-                Recovery = "🅁",
-                TranslationUnit = "🅄",
-                PackExpansion = "🄿",
-                TemplateTypeParm = "🅃",
-                TemplateTemplateParm = "🅃",
-                TemplateParamObject = "🅃",
-            },
-	    },
-    },
-}
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+require("mason").setup {
+    providers = {
+        "mason.providers.client",
+        "mason.providers.registry-api",
+    }
+}
+require("mason-lspconfig").setup()
 
 local lspconfig = require('lspconfig')
 
 -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = { 'cmake', 'pyright' }
+local servers = { 'asm_lsp', 'clangd', 'cmake', 'pyright' }
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
     -- on_attach = my_custom_on_attach,
